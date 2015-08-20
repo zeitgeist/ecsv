@@ -9,3 +9,8 @@ Build
 -----
 
     $ rebar3 compile
+
+
+CI Status
+-------
+![Build Status](https://travis-ci.org/zeitgeist/ecsv.svg)
