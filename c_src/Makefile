@@ -11,7 +11,7 @@ ERL_INTERFACE_INCLUDE_DIR ?= $(shell erl -noshell -s init stop -eval "io:format(
 ERL_INTERFACE_LIB_DIR ?= $(shell erl -noshell -s init stop -eval "io:format(\"~s\", [code:lib_dir(erl_interface, lib)]).")
 
 C_SRC_DIR = $(CURDIR)
-C_SRC_OUTPUT ?= $(CURDIR)/../priv/$(PROJECT).so
+C_SRC_OUTPUT ?= $(CURDIR)/../priv/$(PROJECT)_drv.so
 
 # System type and C compiler/flags.
 

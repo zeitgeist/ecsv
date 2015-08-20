@@ -18,11 +18,13 @@
 %%
 %% -------------------------------------------------------------------
 -module(ecsv_parser).
+-include_lib("eunit/include/eunit.hrl").
+
 -export([parse/2]).
 -on_load(init/0).
 
 -define(APPNAME, ecsv).
--define(LIBNAME, ecsv).
+-define(LIBNAME, ecsv_drv).
 
 init() ->
     SoName = case code:priv_dir(?APPNAME) of
@@ -55,3 +57,26 @@ init() ->
 %     
 parse(_Delimiter, _RawData) ->
     exit(nif_library_not_loaded).
+
+
+-ifdef(TEST).
+
+simple_test_() ->
+    Delim = $;,
+    Tests = [
+	      {<<"a">>, [incomplete, 1, <<"a">>]}
+	     ,{<<"a\n">>, [ok, 2, <<"a">>]}
+	     ,{<<>>, [incomplete, 0, <<>>]}
+	     ,{<<"a;b">>, [incomplete, 3, <<"a">>, <<"b">>]}
+	     ,{<<"a;b\n">>, [ok, 4, <<"a">>, <<"b">>]}
+	     ,{<<"a;b\na">>, [ok, 4, <<"a">>, <<"b">>]}
+	     ,{<<"\n\n">>, [ok, 1, <<>>]}
+	     ,{<<"\r\n\\n">>, [ok, 2, <<>>]}
+	     ,{<<"a;b\r\n">>, [ok, 5, <<"a">>, <<"b">>]}
+	    ],
+    [
+     { Csv, ?_assertEqual(Result, parse(Delim, Csv)) }
+     || {Csv, Result} <- Tests
+    ].
+
+-endif.
