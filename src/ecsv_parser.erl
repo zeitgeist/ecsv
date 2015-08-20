@@ -24,7 +24,7 @@
 -on_load(init/0).
 
 -define(APPNAME, ecsv).
--define(LIBNAME, ecsv).
+-define(LIBNAME, ecsv_drv).
 
 init() ->
     SoName = case code:priv_dir(?APPNAME) of
