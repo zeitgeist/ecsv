@@ -75,8 +75,35 @@ simple_test_() ->
 	     ,{<<"a;b\r\n">>, [ok, 5, <<"a">>, <<"b">>]}
 	    ],
     [
-     { Csv, ?_assertEqual(Result, parse(Delim, Csv)) }
+     { test_name(Csv), ?_assertEqual(Result, parse(Delim, Csv)) }
      || {Csv, Result} <- Tests
     ].
+
+quotes_test_() ->
+    Delim = $,,
+    Tests = [
+	      {<<"\"a\"">>, [incomplete, 3, <<"\"a\"">>]}
+	     ,{<<"\"a">>, [open_quote, 2, <<"\"a">>]}
+	     ,{<<"\"a\",b">>, [incomplete, 5, <<"\"a\"">>, <<"b">>]}
+	     ,{<<"\"a\",b\n">>, [ok, 6, <<"\"a\"">>, <<"b">>]}
+	     ,{<<"\"a\",b\"">>, [open_quote, 6, <<"\"a\"">>, <<"b\"">>]}
+	     ,{<<"\"a,b\"">>, [incomplete, 5, <<"\"a,b\"">>]}
+	     ,{<<"\"a,b\"\n">>, [ok, 6, <<"\"a,b\"">>]}
+	     ,{<<"a,b\"\n">>, [open_quote, 5, <<"a">>, <<"b\"\n">>]}
+	     ,{<<"a,\"b\n\n\"\n">>, [ok, 8, <<"a">>, <<"\"b\n\n\"">>]}
+	     ,{<<"a,\"b\n\n\"">>, [incomplete, 7, <<"a">>, <<"\"b\n\n\"">>]}
+	     ,{<<"a,\"b\n,\n\"">>, [incomplete, 8, <<"a">>, <<"\"b\n,\n\"">>]}
+	     ,{<<"a,\",\"\",\"">>, [incomplete, 8, <<"a">>, <<"\",\"\",\"">>]}
+	     ,{<<"a,\",\"\",\"\n">>, [ok, 9, <<"a">>, <<"\",\"\",\"">>]}
+	     ,{<<"a,\",\",\",\"">>, [incomplete, 9, <<"a">>, <<"\",\"">>,<<"\",\"">>]}
+	     ,{<<"a,\",\",\",\"\n">>, [ok, 10, <<"a">>, <<"\",\"">>,<<"\",\"">>]}
+	    ],
+    [
+     { test_name(Csv), ?_assertEqual(Result, parse(Delim, Csv)) }
+     || {Csv, Result} <- Tests
+    ].
+
+test_name(T) ->
+    lists:flatten(io_lib:format("~p",[T])).
 
 -endif.

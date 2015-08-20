@@ -147,6 +147,7 @@ open_quote:
 out_of_mem:
         FREE_ITEMS();
 	return atom_error;
+#undef FREE_ITEMS
 }
 
 static ErlNifFunc nif_funcs[] = {
